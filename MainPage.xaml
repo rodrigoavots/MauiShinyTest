@@ -1,0 +1,27 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="MauiShinyTest.MainPage">
+
+    <ScrollView>
+        <StackLayout VerticalOptions="CenterAndExpand" >
+
+            <Grid ColumnDefinitions="*,130"
+                  RowDefinitions="*,50,50,50,50"
+                  Margin="20,0,20,0" RowSpacing="20">
+
+                <Label Grid.Row="1" Grid.Column="0"  Text="Bluetooth Test" FontFamily="Helvetica" FontAttributes="Bold" FontSize="Large" TextColor="Black"></Label>
+                <Button Grid.Row="2" Grid.Column="0" Text="Scan" WidthRequest="120" HorizontalOptions ="StartAndExpand" Clicked="OnScanClicked"></Button>
+                <Label Grid.Row="2" Grid.Column="1"  Text="{Binding SensorScanStatus, Mode=TwoWay}" HorizontalOptions="End" TextColor="Black"></Label>
+                <Button Grid.Row="3" Grid.Column="0" Text="Connect" WidthRequest="120" HorizontalOptions ="StartAndExpand" Clicked="OnConnectClicked"></Button>
+                <Label Grid.Row="3" Grid.Column="1"  Text="{Binding SensorConnectionStatus, Mode=TwoWay}" HorizontalOptions="End"  TextColor="Black"></Label>
+                <Button Grid.Row="4" Grid.Column="0" Text="Start notify" WidthRequest="120" HorizontalOptions ="StartAndExpand" Clicked="OnStartNotify"></Button>
+                <Label Grid.Row="4" Grid.Column="1"  Text="{Binding SensorCharacteristicStatus, Mode=TwoWay}" HorizontalOptions="End" VerticalOptions="Center" TextColor="Black"></Label>
+                <Button Grid.Row="5" Grid.Column="0" Text="Disconnect" WidthRequest="120" HorizontalOptions ="StartAndExpand" Clicked="OnDisconnect"></Button>
+                <Label Grid.Row="5" Grid.Column="1"  Text="" TextColor="Black" HorizontalOptions="End" VerticalOptions="Center"></Label>
+            </Grid>
+
+        </StackLayout>
+    </ScrollView>
+
+</ContentPage>
