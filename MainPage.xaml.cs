@@ -1,8 +1,10 @@
-﻿using MauiShinyTest.Popup;
+﻿using MauiShinyTest.Extension;
+using MauiShinyTest.Popup;
 using Shiny.BluetoothLE;
 using System.Diagnostics;
 using System.Reactive.Linq;
 using System.Reactive.Threading.Tasks;
+using System.Text;
 
 namespace MauiShinyTest;
 
@@ -50,7 +52,7 @@ public partial class MainPage : ContentPage
 
             var adv = scanResult.AdvertisementData;
 
-            if (adv.LocalName != null && adv.LocalName.Contains("Sensor"))
+            if (adv.LocalName != null && adv.LocalName.Contains("BluVib"))
             {
                 watch.Stop();
                 SensorScanStatus = "Device found: " + scanResult.Peripheral.Name.ToString();
@@ -73,7 +75,7 @@ public partial class MainPage : ContentPage
                 await peripheral.WithConnectIf().Timeout(TimeSpan.FromSeconds(30)).ToTask();
 
                 //*** Test All Characteristics
-                var test1 = await peripheral.GetAllCharacteristics().Timeout(TimeSpan.FromSeconds(20));
+                var teste = await peripheral.GetAllCharacteristics().Timeout(TimeSpan.FromSeconds(20));
 
                 wscObserver = peripheral.WhenStatusChanged().Subscribe(connectionState =>
                 {
@@ -107,8 +109,8 @@ public partial class MainPage : ContentPage
                 });
 
                 //*** Get Characteristc - ChBattery
-                sensorCharacteristic = await peripheral.GetCharacteristic(AppSettings.GetServiceUuid, AppSettings.ChBattery).Take(1)
-                      .Timeout(TimeSpan.FromSeconds(10));
+                //sensorCharacteristic = await peripheral.GetCharacteristic(AppSettings.GetServiceUuid, AppSettings.ChBattery).Take(1)
+                //      .Timeout(TimeSpan.FromSeconds(10));
             }
             catch (Exception ex)
             {
@@ -126,14 +128,23 @@ public partial class MainPage : ContentPage
     {
         sensorCharacteristic = null;
 
-        try
-        {
-            var test2 = await peripheral.GetAllCharacteristicsAsync();
-        }
-        catch (Exception ex)
-        {
-            Debug.WriteLine("Exception in GKC: " + ex);
-        }
+        string seriveUUID = AppSettings.ServiceUUID;
+        string charUUID = AppSettings.ChNotifyVib;
+
+        chsResult = peripheral
+            .NotifyCharacteristic(seriveUUID, charUUID)
+            .Timeout(TimeSpan.FromSeconds(30))
+            .SubOnMainThread(
+                x =>
+                {
+                    //read
+                    this.SetReadValue(x, false);
+                }
+                , ex =>
+                {
+                    _ = DialogServices.SnackBarMsg("Erro DoNotifyAsync!\n" + ex.Message);
+                }
+        );
 
 
         if (sensorCharacteristic != null)
@@ -143,6 +154,12 @@ public partial class MainPage : ContentPage
             OnPropertyChanged(nameof(SensorCharacteristicStatus));
         }
     }
+    void SetReadValue(BleCharacteristicResult result, bool fromUtf8) => Application.Current.Dispatcher.Dispatch(() => //Device.BeginInvokeOnMainThread(() =>
+    {
+        var testeResult = fromUtf8
+                ? Encoding.UTF8.GetString(result.Data, 0, result.Data.Length)
+                : BitConverter.ToString(result.Data).Replace("-", " ");
+    });
 
 
     async void OnDisconnect(object s, EventArgs e)

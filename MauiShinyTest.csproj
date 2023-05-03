@@ -51,6 +51,7 @@
 	<ItemGroup>
 		<PackageReference Include="CommunityToolkit.Maui" Version="5.1.0" />
 		<PackageReference Include="Microsoft.Extensions.Logging.Debug" Version="7.0.0" />
+		<PackageReference Include="ReactiveUI.Fody" Version="18.4.26" />
 		<PackageReference Include="Shiny.BluetoothLE" Version="3.0.0-beta-0015" />
 	</ItemGroup>
 
